@@ -14,7 +14,7 @@ def groupingDistance(A):
 
 def euclideanDistance(sample_one, sample_two):
     distance =0
-    for i in range(len(sample_one)-1):
+    for i in range(len(sample_one)):
         distance+= pow(sample_one[i] - sample_two[i],2)
     return math.sqrt(distance)
 
@@ -33,13 +33,13 @@ def Knn(A, k, x):
     for j in A:
         summary=0
         temp = np.sort(A[j])
-    
+        #print("J["+str(j)+"]")
+        #print(temp)
         for i in range(k):
             # print("j: " + str(temp[i]))
             summary+=temp[i]
         groups.update({j: summary})
-    # print(groups)
-    # print(min(groups, key=groups.get))
+    #print(min(groups, key=groups.get))
     return min(groups, key=groups.get)
 
 def oneVsRest(A, k):
@@ -58,24 +58,17 @@ def oneVsRest(A, k):
     return accuracy
         
             
-            
-        
-        
-    
-
-        
-    
-    
- 
 
 with open('iris.txt', 'r') as csv_data:
-    # pass the file object to reader() to get the reader object
     csv_reader = reader(csv_data, delimiter='\t')
-    # Pass reader object to list() to get a list of lists
+
     A = np.array(list(csv_reader)).astype('float64')
   
     #Resoult=Knn(A,4, [5, 8, 8, 4])
-    oneVsRest(A,4)
+    oneVsRest(A,40)
+    #Knn(A, 30, [2.5, 1.0, 4.0, 5.5])
+    
+   
     
     
     
