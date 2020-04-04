@@ -2,12 +2,28 @@ import math
 import numpy as np
 from csv import reader
 
+H = np.array([[1, -2, 12],[2, 0, 11],[1.5, 4, 16]])
+
+
+def normalization(A):
+    for j in range(A[0].size-1):
+        minimum = np.min(A[:,j])
+        maximum = np.max(A[:,j])
+        temp = []
+        for i in A[:,j]:
+        
+            resoult = (i - minimum)/(maximum - minimum)
+            temp.append(resoult)
+        A[:,j] = temp
+    return A
+        
 def groupingDistance(A):
     temp = []
     decisions = np.unique(A[:,A[1].size-1])
     for i in decisions:
         helper = A[i==A[:,A[1].size-1]]
         temp.append(helper[:,:helper[1].size-1])
+    # print(temp)
     
     return [temp, decisions]
            
@@ -18,7 +34,7 @@ def euclideanDistance(sample_one, sample_two):
         distance+= pow(sample_one[i] - sample_two[i],2)
     return math.sqrt(distance)
 
-def groupingDistanceToX(A, x):
+def groupingDistanceForX(A, x):
     data = groupingDistance(A)
     groups = {}
     for j in range(len(data[0])):
@@ -28,7 +44,7 @@ def groupingDistanceToX(A, x):
         groups.update({data[1][j]: temp})
     return groups
 def Knn(A, k, x):
-    A = groupingDistanceToX(A, x)
+    A = groupingDistanceForX(A, x)
     groups = {}
     for j in A:
         summary=0
@@ -57,16 +73,40 @@ def oneVsRest(A, k):
     print("Accuracy = " +str(accuracy)+"%")
     return accuracy
         
-            
+def lookingForK(A):
+    decisions = np.unique(A[:,A[1].size-1])
+    temp = []
+    for i in decisions:
+        temp.append(A[i==A[:,A[1].size-1]].shape[0])
+    minimum = min(temp)
+    
+    resoults = {}
+    for i in range(3,minimum):
+        print("For i = ", i)
+        resoults.update({i: oneVsRest(A, i)})
+    maximum = max(resoults.values())
+    
+    print("Largest accuracy: ",maximum)
+    tab = []
+    for index, value in resoults.items():
+        if value == maximum:
+            tab.append(index)
+    print("List of k with largest accuracy: ",tab)
+    return tab
+        
+        
 
 with open('iris.txt', 'r') as csv_data:
     csv_reader = reader(csv_data, delimiter='\t')
 
     A = np.array(list(csv_reader)).astype('float64')
   
-    #Resoult=Knn(A,4, [5, 8, 8, 4])
-    oneVsRest(A,40)
+    # Resoult=Knn(A,4, [2.5, 1.0, 4.0, 5.5])
+    #oneVsRest(A,40)
     #Knn(A, 30, [2.5, 1.0, 4.0, 5.5])
+    A = normalization(A)
+    
+    lookingForK(A)
     
    
     
